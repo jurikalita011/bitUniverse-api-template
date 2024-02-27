@@ -12,7 +12,7 @@ TokenRouter.post("/add", async (req, res) => {
   }
 });
 
-TokenRouter.get("/get", async (req, res) => {
+TokenRouter.get("/", async (req, res) => {
   try {
     const token = await TokenModel.find();
     res.status(200).send(token);
