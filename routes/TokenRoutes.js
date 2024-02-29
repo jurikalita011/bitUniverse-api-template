@@ -14,15 +14,21 @@ TokenRouter.post("/add", async (req, res) => {
 
 TokenRouter.get("/", async (req, res) => {
   try {
-    const { page, limit } = req.query;
-    if (!page) page = 1;
-    const tokenData = await TokenModel.find()
-      .skip((page - 1) * 60)
-      .limit(limit);
-    res.status(200).send({ data: tokenData });
+    let { page, limit } = req.query;
+
+    page = +page || 1;
+    limit = +limit || 10;
+
+    const skip = (page - 1) * limit;
+    const tokenData = await TokenModel.find().skip(skip).limit(limit);
+    const total = await TokenModel.countDocuments();
+
+    res.status(200).send({ data: tokenData, total });
   } catch (error) {
     console.log(error);
-    res.status(500).send({ msg: "No token data found", err: error.message });
+    res
+      .status(500)
+      .send({ msg: "Error fetching token data", err: error.message });
   }
 });
 
